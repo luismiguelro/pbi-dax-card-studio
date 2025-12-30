@@ -156,6 +156,105 @@ a {
   margin-top: 12px;
 }
 
+.docs {
+  max-width: 980px;
+}
+
+.docs-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+:root[data-theme='light'] .docs-section {
+  background: rgba(16, 24, 40, 0.02);
+  border: 1px solid rgba(16, 24, 40, 0.12);
+}
+
+.docs-h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.docs-p {
+  margin: 0;
+  color: var(--text);
+  opacity: 0.9;
+  line-height: 1.55;
+}
+
+.docs-ol,
+.docs-ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+.docs-ol li,
+.docs-ul li {
+  margin: 8px 0;
+}
+
+.docs-code {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+}
+
+:root[data-theme='light'] .docs-code {
+  background: rgba(16, 24, 40, 0.04);
+  border: 1px solid rgba(16, 24, 40, 0.14);
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.docs-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+:root[data-theme='light'] .docs-card {
+  background: rgba(16, 24, 40, 0.03);
+  border: 1px solid rgba(16, 24, 40, 0.12);
+}
+
+.docs-card-title {
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.docs-pre {
+  margin: 10px 0 0;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: auto;
+}
+
+:root[data-theme='light'] .docs-pre {
+  background: rgba(16, 24, 40, 0.06);
+  border: 1px solid rgba(16, 24, 40, 0.12);
+}
+
 .tag {
   font-size: 11px;
   color: var(--text);
@@ -423,12 +522,15 @@ a {
 .appFooter {
   border-top: 1px solid var(--border);
   background: var(--panel);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
 }
 
 .appFooter-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 10px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -437,11 +539,12 @@ a {
 
 .appFooter-name {
   font-weight: 900;
+  font-size: 12px;
 }
 
 .appFooter-role {
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -454,7 +557,7 @@ a {
 .appFooter-link {
   color: var(--primary);
   font-weight: 800;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 @media (max-width: 900px) {

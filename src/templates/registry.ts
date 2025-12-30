@@ -5,6 +5,11 @@ import { dumbbellTemplate } from './dumbbell'
 import { kpiDeltaTemplate } from './kpiDelta'
 import { bulletTemplate } from './bullet'
 import { donutTemplate } from './donut'
+import { kpiStatusRagTemplate } from './kpiStatusRag'
+import { kpiDriversTemplate } from './kpiDrivers'
+import { kpiAnomalyAlertTemplate } from './kpiAnomalyAlert'
+import { kpiCohortRetentionTemplate } from './kpiCohortRetention'
+import { kpiForecastRunRateTemplate } from './kpiForecastRunRate'
 
 export const templates = [
   kpiCardProTemplate,
@@ -13,6 +18,11 @@ export const templates = [
   kpiDeltaTemplate,
   bulletTemplate,
   donutTemplate,
+  kpiStatusRagTemplate,
+  kpiDriversTemplate,
+  kpiAnomalyAlertTemplate,
+  kpiCohortRetentionTemplate,
+  kpiForecastRunRateTemplate,
 ] as const
 
 export type AnyTemplate = (typeof templates)[number]
