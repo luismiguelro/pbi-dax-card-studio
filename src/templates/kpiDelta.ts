@@ -69,12 +69,25 @@ export const kpiDeltaTemplate: TemplateDefinition<KpiDeltaProps> = {
   },
   exportDax: (p) => {
     const shadow = shadowCss(p)
-    return `KPI Delta - Value =
+    return `-- 1) Pick your base KPI (example: Sales)
+-- Base KPI example:
+-- [Total Sales] = SUM('Fact Sales'[SalesAmount])
+-- Then map the template inputs:
+
+KPI Delta - Value =
 [KPI Value]
+-- Example:
+-- [KPI Value] = [Total Sales]
 
 KPI Delta - Prev =
 [KPI Prev]
+-- Examples (pick one):
+-- Previous month:  CALCULATE([Total Sales], DATEADD('Date'[Date], -1, MONTH))
+-- Previous year:   CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))
+-- Previous period (generic): CALCULATE([Total Sales], DATEADD('Date'[Date], -1, DAY))
+-- Tip: always use a proper Date table marked as Date table.
 
+-- 2) Final measure (use this one in the HTML visual)
 KPI Delta - HTML =
 VAR _Value = [KPI Value]
 VAR _Prev = [KPI Prev]

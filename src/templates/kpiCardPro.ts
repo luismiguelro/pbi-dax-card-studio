@@ -100,7 +100,33 @@ export const kpiCardProTemplate: TemplateDefinition<KpiCardProProps> = {
     { id: 'textColor', label: 'Text Color', type: 'color' },
     { id: 'bgColor', label: 'Background Color', type: 'color' },
     { id: 'radius', label: 'Border Radius', type: 'range', min: 0, max: 24, step: 1 },
-    { id: 'iconName', label: 'Icon Name (Google)', type: 'text', placeholder: 'monitoring' },
+    {
+      id: 'iconName',
+      label: 'Icon Name',
+      type: 'select',
+      options: [
+        { value: 'monitoring', label: '📊 monitoring' },
+        { value: 'trending_up', label: '📈 trending_up' },
+        { value: 'analytics', label: '📉 analytics' },
+        { value: 'shopping_cart', label: '🛒 shopping_cart' },
+        { value: 'attach_money', label: '💰 attach_money' },
+        { value: 'paid', label: '💸 paid' },
+        { value: 'savings', label: '🏦 savings' },
+        { value: 'receipt_long', label: '🧾 receipt_long' },
+        { value: 'inventory', label: '📦 inventory' },
+        { value: 'store', label: '🏪 store' },
+        { value: 'payments', label: '💳 payments' },
+        { value: 'account_balance', label: '💼 account_balance' },
+        { value: 'credit_score', label: '📊 credit_score' },
+        { value: 'wallet', label: '👛 wallet' },
+        { value: 'sell', label: '💵 sell' },
+        { value: 'local_shipping', label: '🚚 local_shipping' },
+        { value: 'speed', label: '⚡ speed' },
+        { value: 'rocket_launch', label: '🚀 rocket_launch' },
+        { value: 'emoji_events', label: '🏆 emoji_events' },
+        { value: 'military_tech', label: '🏅 military_tech' },
+      ],
+    },
     { id: 'shadowX', label: 'Shadow X', type: 'range', min: -20, max: 20, step: 1 },
     { id: 'shadowY', label: 'Shadow Y', type: 'range', min: -20, max: 20, step: 1 },
     { id: 'shadowBlur', label: 'Shadow Blur', type: 'range', min: 0, max: 50, step: 1 },
@@ -181,20 +207,46 @@ export const kpiCardProTemplate: TemplateDefinition<KpiCardProProps> = {
     return `KPI Card Pro - Value =
 [YourMeasure]
 
+-- Example: [Total Sales]
+-- This is your main KPI value (current period)
+
 KPI Card Pro - Progress =
 [KPI Progress]
+
+-- Example: Progress = DIVIDE([Total Sales], [Sales Target])
+-- Returns 0..1 (percentage) representing progress toward a target
+-- Ensure [Sales Target] is not BLANK; otherwise return 0
+-- VAR _Progress = DIVIDE([Total Sales], [Sales Target], 0)
 
 KPI Card Pro - Target =
 [KPI Target]
 
+-- Example: [Sales Target]
+-- This can be a static number, a measure, or a slicer selection
+-- If you use a slicer, you might need SELECTEDVALUE
+-- VAR _Target = SELECTEDVALUE('Targets'[TargetValue], 0)
+
 KPI Card Pro - Prev =
 [KPI Prev]
+
+-- Example: [Total Sales Prev Period]
+-- Usually calculated with SAMEPERIODLASTYEAR or DATEADD
+-- VAR _Prev = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))
+-- VAR _Prev = CALCULATE([Total Sales], DATEADD('Date'[Date], -1, MONTH))
 
 KPI Card Pro - Curr =
 [KPI Curr]
 
+-- Example: [Total Sales Current Period]
+-- Often the same as [YourMeasure] but can be filtered differently
+-- VAR _Curr = CALCULATE([Total Sales], DATESBETWEEN('Date'[Date], [Start], [End]))
+
 KPI Card Pro - Max =
 [KPI Max]
+
+-- Example: [Maximum Sales Ever] or a fixed denominator for dumbbell
+-- VAR _Max = MAXX(ALL('Date'), [Total Sales])
+-- VAR _Max = 1000000  -- fixed 1M as denominator
 
 KPI Card Pro - HTML =
 VAR _Value = FORMAT([YourMeasure], "#,##0")
