@@ -52,7 +52,19 @@ export const donutTemplate: TemplateDefinition<DonutProps> = {
     { id: 'shadowBlur', label: 'Shadow Blur', type: 'range', min: 0, max: 50, step: 1 },
     { id: 'shadowOpacity', label: 'Shadow Opacity', type: 'range', min: 0, max: 100, step: 1 },
     { id: 'valuePct', label: 'Progress (%)', type: 'range', min: 0, max: 100, step: 1 },
-    { id: 'ringBgColor', label: 'Ring Background Color', type: 'text', placeholder: 'rgba(255,255,255,0.10)' },
+    {
+      id: 'ringBgColor',
+      label: 'Ring Background Color',
+      type: 'select',
+      options: [
+        { value: 'rgba(255,255,255,0.10)', label: 'White 10% (default)' },
+        { value: 'rgba(255,255,255,0.20)', label: 'White 20%' },
+        { value: 'rgba(255,255,255,0.06)', label: 'White 6%' },
+        { value: 'rgba(0,0,0,0.20)', label: 'Black 20%' },
+        { value: 'rgba(0,0,0,0.35)', label: 'Black 35%' },
+        { value: 'transparent', label: 'Transparent' },
+      ],
+    },
     { id: 'size', label: 'Size', type: 'range', min: 80, max: 200, step: 1 },
   ],
   renderPreviewHtml: (p) => {
@@ -81,6 +93,29 @@ export const donutTemplate: TemplateDefinition<DonutProps> = {
   },
   exportDax: (p) => {
     const shadow = shadowCss(p)
-    return `Donut Measure = \nVAR _Pct = [PctMeasure] \nVAR _BgColor = "${p.bgColor}"\nVAR _TextColor = "${p.textColor}"\nVAR _Color = "${p.accentColor}"\nVAR _Size = ${Math.max(80, Math.min(220, p.size))}\nVAR _Stroke = ROUND(_Size * 0.12, 0)\nVAR _R = (_Size - _Stroke) / 2\nVAR _C = 2 * PI() * _R\nVAR _Dash = (_Pct * 100) / 100 * _C\nRETURN \n"<div style='background-color:" & _BgColor & "; border-radius:${p.radius}px; padding:18px 20px; box-shadow:${shadow}; font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1); display:flex; align-items:center; justify-content:space-between; gap:16px;'>" &\n"<div><div style='color:" & _TextColor & "; opacity:0.75; font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:8px;'>SLA</div>" &\n"<div style='color:" & _TextColor & "; font-size:28px; font-weight:900;'>" & FORMAT(_Pct, "0%") & "</div></div>" &\n"<svg width='" & _Size & "' height='" & _Size & "' viewBox='0 0 " & _Size & " " & _Size & "'>" &\n"<circle cx='" & (_Size/2) & "' cy='" & (_Size/2) & "' r='" & _R & "' stroke='${p.ringBgColor}' stroke-width='" & _Stroke & "' fill='none'/>" &\n"<circle cx='" & (_Size/2) & "' cy='" & (_Size/2) & "' r='" & _R & "' stroke='" & _Color & "' stroke-width='" & _Stroke & "' fill='none' stroke-linecap='round' stroke-dasharray='" & _Dash & " " & (_C - _Dash) & "' transform='rotate(-90 " & (_Size/2) & " " & (_Size/2) & ")'/>" &\n"</svg></div>"`
+    return `Donut - Pct =
+[KPI Pct]
+
+Donut - HTML =
+VAR _PctRaw = [KPI Pct]
+VAR _Pct = MIN(1, MAX(0, _PctRaw))
+
+VAR _BgColor = "${p.bgColor}"
+VAR _TextColor = "${p.textColor}"
+VAR _Color = "${p.accentColor}"
+VAR _Size = ${Math.max(80, Math.min(220, p.size))}
+VAR _Stroke = ROUND(_Size * 0.12, 0)
+VAR _R = (_Size - _Stroke) / 2
+VAR _C = 2 * PI() * _R
+VAR _Dash = _Pct * _C
+
+RETURN
+"<div style='background-color:" & _BgColor & "; border-radius:${p.radius}px; padding:18px 20px; box-shadow:${shadow}; font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1); display:flex; align-items:center; justify-content:space-between; gap:16px;'>" &
+"<div><div style='color:" & _TextColor & "; opacity:0.75; font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:8px;'>SLA</div>" &
+"<div style='color:" & _TextColor & "; font-size:28px; font-weight:900;'>" & FORMAT(_Pct, "0%") & "</div></div>" &
+"<svg width='" & _Size & "' height='" & _Size & "' viewBox='0 0 " & _Size & " " & _Size & "'>" &
+"<circle cx='" & (_Size/2) & "' cy='" & (_Size/2) & "' r='" & _R & "' stroke='${p.ringBgColor}' stroke-width='" & _Stroke & "' fill='none'/>" &
+"<circle cx='" & (_Size/2) & "' cy='" & (_Size/2) & "' r='" & _R & "' stroke='" & _Color & "' stroke-width='" & _Stroke & "' fill='none' stroke-linecap='round' stroke-dasharray='" & _Dash & " " & (_C - _Dash) & "' transform='rotate(-90 " & (_Size/2) & " " & (_Size/2) & ")'/>" &
+"</svg></div>"`
   },
 }

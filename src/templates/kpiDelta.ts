@@ -58,7 +58,7 @@ export const kpiDeltaTemplate: TemplateDefinition<KpiDeltaProps> = {
   <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
     <div>
       <div style="color:${p.textColor}; opacity:0.7; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Revenue</div>
-      <div style="color:${p.textColor}; font-size:34px; font-weight:800; line-height:1.1;">R$ 2.4M</div>
+      <div style="color:${p.textColor}; font-size:34px; font-weight:800; line-height:1.1;">2.4M</div>
     </div>
     <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); padding:6px 10px; border-radius:999px; color:${deltaColor}; font-weight:700; font-size:12px;">${deltaArrow} 12.3%</div>
   </div>
@@ -68,44 +68,40 @@ export const kpiDeltaTemplate: TemplateDefinition<KpiDeltaProps> = {
 </div>`
   },
   exportDax: (p) => {
-    void p
-    return `KPI Delta Measure =
-VAR _Value = [Ventas]
+    const shadow = shadowCss(p)
+    return `KPI Delta - Value =
+[KPI Value]
 
-VAR _VentasMesAnterior = [Ventas Mes Anterior]
+KPI Delta - Prev =
+[KPI Prev]
 
-VAR _Delta =
-    DIVIDE(
-        _Value - _VentasMesAnterior,
-        _VentasMesAnterior
-    )
+KPI Delta - HTML =
+VAR _Value = [KPI Value]
+VAR _Prev = [KPI Prev]
+
+VAR _Delta = DIVIDE(_Value - _Prev, _Prev)
 
 VAR _DeltaArrow = IF(_Delta >= 0, "▲", "▼")
-VAR _DeltaColor = IF(_Delta >= 0, "#4caf50", "#ff4d4f")
+VAR _DeltaColor = IF(_Delta >= 0, "${p.positiveColor}", "${p.negativeColor}")
 
-VAR _BgColor = "#252526"
-VAR _TextColor = "#e1e1e1"
-VAR _BarColor = "#60cdff"
-VAR _Radius = "12px"
+VAR _BgColor = "${p.bgColor}"
+VAR _TextColor = "${p.textColor}"
+VAR _BarColor = "${p.accentColor}"
+VAR _Radius = "${p.radius}px"
 
 RETURN
-"<div style='background-color:" & _BgColor & "; border-radius:" & _Radius & "; padding:20px 22px; box-shadow:0px 4px 12px rgba(0,0,0,0.1); font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1);'>" &
+"<div style='background-color:" & _BgColor & "; border-radius:" & _Radius & "; padding:20px 22px; box-shadow:${shadow}; font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1);'>" &
 "<div style='display:flex; justify-content:space-between; align-items:flex-start; gap:12px;'>" &
-"<div>
-    <div style='color:" & _TextColor & "; opacity:0.7; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;'>
-        Revenue
-    </div>
-    <div style='color:" & _TextColor & "; font-size:34px; font-weight:800; line-height:1.1;'>
-        " & FORMAT(_Value, "R$ #,##0") & "
-    </div>
-</div>" &
-"<div style='background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); padding:6px 10px; border-radius:999px; color:" & _DeltaColor & "; font-weight:700; font-size:12px;'>
-    " & _DeltaArrow & " " & FORMAT(ABS(_Delta), "0.0%") & "
-</div>" &
+"<div>" &
+"<div style='color:" & _TextColor & "; opacity:0.7; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;'>Revenue</div>" &
+"<div style='color:" & _TextColor & "; font-size:34px; font-weight:800; line-height:1.1;'>" & FORMAT(_Value, "#,##0") & "</div>" &
 "</div>" &
-"<div style='margin-top:14px; height:6px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;'>
-    <div style='width:65%; height:100%; background-color:" & _BarColor & ";'></div>
-</div>
-</div>"`
+"<div style='background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10); padding:6px 10px; border-radius:999px; color:" & _DeltaColor & "; font-weight:700; font-size:12px;'>" &
+_DeltaArrow & " " & FORMAT(ABS(_Delta), "0.0%") & "</div>" &
+"</div>" &
+"<div style='margin-top:14px; height:6px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;'>" &
+"<div style='width:65%; height:100%; background-color:" & _BarColor & ";'></div>" &
+"</div>" &
+"</div>"`
   },
 }
