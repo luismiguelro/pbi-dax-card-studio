@@ -15,14 +15,19 @@ export default function CatalogPage() {
               <div className="title">pbi-dax-card-studio</div>
               <div className="subtitle">Card template catalog to generate DAX (embedded HTML/CSS)</div>
             </div>
-            <a
-              className="link"
-              href="https://fonts.google.com/icons?icon.style=Outlined"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Icons (Google)
-            </a>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Link className="btn ghost" to="/docs">
+                Docs
+              </Link>
+              <a
+                className="link"
+                href="https://fonts.google.com/icons?icon.style=Outlined"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Icons (Google)
+              </a>
+            </div>
           </header>
 
           <div className="grid">

@@ -79,6 +79,29 @@ export const bulletTemplate: TemplateDefinition<BulletProps> = {
   },
   exportDax: (p) => {
     const shadow = shadowCss(p)
-    return `Bullet Measure = \nVAR _Val = [ActualPct] \nVAR _Target = [TargetPct] \nVAR _Width = (_Val * 100) & "%"\nVAR _TargetPct = (_Target * 100) & "%"\nVAR _BgColor = "${p.bgColor}"\nVAR _TextColor = "${p.textColor}"\nVAR _ActualColor = "${p.accentColor}"\nVAR _TargetColor = "${p.targetColor}"\nRETURN \n"<div style='background-color:" & _BgColor & "; border-radius:${p.radius}px; padding:18px 20px; box-shadow:${shadow}; font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1);'>" &\n"<div style='display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;'>" &\n"<div style='color:" & _TextColor & "; opacity:0.75; font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase;'>Conversion</div>" &\n"<div style='color:" & _TextColor & "; font-weight:800;'>" & FORMAT(_Val, "0%") & "</div></div>" &\n"<div style='position:relative; height:10px; background:${p.trackColor}; border-radius:999px; overflow:hidden;'><div style='height:100%; width:" & _Width & "; background-color:" & _ActualColor & ";'></div><div style='position:absolute; top:-4px; bottom:-4px; width:2px; left:" & _TargetPct & "; background-color:" & _TargetColor & "; transform:translateX(-50%);'></div></div></div>"`
+    return `Bullet - Value =
+[KPI Value]
+
+Bullet - Target =
+[KPI Target]
+
+Bullet - HTML =
+VAR _Val = [KPI Value]
+VAR _Target = [KPI Target]
+
+VAR _Width = FORMAT(MIN(1, MAX(0, _Val)), "0%")
+VAR _TargetPct = FORMAT(MIN(1, MAX(0, _Target)), "0%")
+
+VAR _BgColor = "${p.bgColor}"
+VAR _TextColor = "${p.textColor}"
+VAR _ActualColor = "${p.accentColor}"
+VAR _TargetColor = "${p.targetColor}"
+
+RETURN
+"<div style='background-color:" & _BgColor & "; border-radius:${p.radius}px; padding:18px 20px; box-shadow:${shadow}; font-family:Segoe UI; border:1px solid rgba(128,128,128,0.1);'>" &
+"<div style='display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;'>" &
+"<div style='color:" & _TextColor & "; opacity:0.75; font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase;'>Conversion</div>" &
+"<div style='color:" & _TextColor & "; font-weight:800;'>" & FORMAT(_Val, "0%") & "</div></div>" &
+"<div style='position:relative; height:10px; background:${p.trackColor}; border-radius:999px; overflow:hidden;'><div style='height:100%; width:" & _Width & "; background-color:" & _ActualColor & ";'></div><div style='position:absolute; top:-4px; bottom:-4px; width:2px; left:" & _TargetPct & "; background-color:" & _TargetColor & "; transform:translateX(-50%);'></div></div></div>"`
   },
 }

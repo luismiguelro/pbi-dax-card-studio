@@ -132,21 +132,45 @@ export const dumbbellTemplate: TemplateDefinition<DumbbellProps> = {
       : `VAR _PosProp = "left" \nVAR _CrossProp = "top:50%; transform:translateY(-50%)"`
 
     const daxLineDiv = isVert
-      ? `"<div style='position:absolute; " & _CrossProp & "; width:2px; " & _PosProp & ":" & _Start & "; height:" & _Diff & "; background-color:" & _CorTexto & "; opacity:0.4;'></div>"`
-      : `"<div style='position:absolute; " & _CrossProp & "; height:2px; " & _PosProp & ":" & _Start & "; width:" & _Diff & "; background-color:" & _CorTexto & "; opacity:0.4;'></div>"`
+      ? `"<div style='position:absolute; " & _CrossProp & "; width:2px; " & _PosProp & ":" & _Start & "; height:" & _Diff & "; background-color:" & _TextColor & "; opacity:0.4;'></div>"`
+      : `"<div style='position:absolute; " & _CrossProp & "; height:2px; " & _PosProp & ":" & _Start & "; width:" & _Diff & "; background-color:" & _TextColor & "; opacity:0.4;'></div>"`
 
     const daxDotPrev = isVert
-      ? `"<div style='position:absolute; " & _CrossProp & "; bottom:" & _PctAnt & "%" & "; width:10px; height:10px; background-color:" & _CorAnt & "; border-radius:50%; margin-bottom:-5px;'></div>"`
-      : `"<div style='position:absolute; " & _CrossProp & "; left:" & _PctAnt & "%" & "; width:10px; height:10px; background-color:" & _CorAnt & "; border-radius:50%; margin-left:-5px;'></div>"`
+      ? `"<div style='position:absolute; " & _CrossProp & "; bottom:" & _PctPrev & "%" & "; width:10px; height:10px; background-color:" & _PrevColor & "; border-radius:50%; margin-bottom:-5px;'></div>"`
+      : `"<div style='position:absolute; " & _CrossProp & "; left:" & _PctPrev & "%" & "; width:10px; height:10px; background-color:" & _PrevColor & "; border-radius:50%; margin-left:-5px;'></div>"`
 
     const daxDotCurr = isVert
-      ? `"<div style='position:absolute; " & _CrossProp & "; bottom:" & _PctAtual & "%" & "; width:14px; height:14px; background-color:" & _CorAtual & "; border:2px solid " & _BorderColor & "; border-radius:50%; margin-bottom:-7px; z-index:3;'></div>"`
-      : `"<div style='position:absolute; " & _CrossProp & "; left:" & _PctAtual & "%" & "; width:14px; height:14px; background-color:" & _CorAtual & "; border:2px solid " & _BorderColor & "; border-radius:50%; margin-left:-7px; z-index:3;'></div>"`
+      ? `"<div style='position:absolute; " & _CrossProp & "; bottom:" & _PctCurr & "%" & "; width:14px; height:14px; background-color:" & _CurrColor & "; border:2px solid " & _BorderColor & "; border-radius:50%; margin-bottom:-7px; z-index:3;'></div>"`
+      : `"<div style='position:absolute; " & _CrossProp & "; left:" & _PctCurr & "%" & "; width:14px; height:14px; background-color:" & _CurrColor & "; border:2px solid " & _BorderColor & "; border-radius:50%; margin-left:-7px; z-index:3;'></div>"`
 
     const containerStart = p.isCardMode
-      ? `"<div style='background-color:" & _CorFundo & "; border-radius:" & _Raio & "; padding:24px; box-shadow:${shadow}; font-family:Segoe UI;'><div style='text-align:center; color:" & _CorTexto & "; font-size:12px; margin-bottom:10px;'>COMPARISON</div><div style='position:relative; width:100%; height:150px;'>"`
+      ? `"<div style='background-color:" & _BgColor & "; border-radius:" & _Radius & "; padding:24px; box-shadow:${shadow}; font-family:Segoe UI;'><div style='text-align:center; color:" & _TextColor & "; font-size:12px; margin-bottom:10px;'>COMPARISON</div><div style='position:relative; width:100%; height:150px;'>"`
       : `"<div style='position:relative; width:100%; height:100%; min-height:40px;'>"`
 
-    return `Dumbbell ${isVert ? 'Vertical' : 'Horizontal'} Measure = \nVAR _ValorAnt = [MedidaAnterior]\nVAR _ValorAtual = [MedidaAtual]\nVAR _Max = [MedidaMaximo]\nVAR _PctAnt = DIVIDE(_ValorAnt, _Max, 0) * 100\nVAR _PctAtual = DIVIDE(_ValorAtual, _Max, 0) * 100\nVAR _Start = MIN(_PctAnt, _PctAtual) & "%"\nVAR _Diff = ABS(_PctAtual - _PctAnt) & "%"\nVAR _CorTexto = "${p.textColor}"\nVAR _CorAnt = "${p.prevColor}"\nVAR _CorAtual = "${p.accentColor}"\nVAR _CorFundo = "${p.isCardMode ? p.bgColor : 'transparent'}"\nVAR _Raio = "${p.isCardMode ? `${p.radius}px` : '0'}"\nVAR _BorderColor = "${borderColor}"\n${daxVarOrientation}\nRETURN ${containerStart} & ${daxLineDiv} & ${daxDotPrev} & ${daxDotCurr} & "</div>" ${p.isCardMode ? '& "</div>"' : ''}`
+    return `Dumbbell - Prev =
+[KPI Prev]
+
+Dumbbell - Curr =
+[KPI Curr]
+
+Dumbbell - Max =
+[KPI Max]
+
+Dumbbell - HTML =
+VAR _Prev = [KPI Prev]
+VAR _Curr = [KPI Curr]
+VAR _Max = [KPI Max]
+VAR _PctPrev = DIVIDE(_Prev, _Max, 0) * 100
+VAR _PctCurr = DIVIDE(_Curr, _Max, 0) * 100
+VAR _Start = MIN(_PctPrev, _PctCurr) & "%"
+VAR _Diff = ABS(_PctCurr - _PctPrev) & "%"
+VAR _TextColor = "${p.textColor}"
+VAR _PrevColor = "${p.prevColor}"
+VAR _CurrColor = "${p.accentColor}"
+VAR _BgColor = "${p.isCardMode ? p.bgColor : 'transparent'}"
+VAR _Radius = "${p.isCardMode ? `${p.radius}px` : '0'}"
+VAR _BorderColor = "${borderColor}"
+${daxVarOrientation}
+RETURN ${containerStart} & ${daxLineDiv} & ${daxDotPrev} & ${daxDotCurr} & "</div>" ${p.isCardMode ? '& "</div>"' : ''}`
   },
 }

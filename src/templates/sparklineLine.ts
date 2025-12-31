@@ -79,7 +79,7 @@ export const sparklineLineTemplate: TemplateDefinition<SparklineLineProps> = {
     return `<div style="background:${p.bgColor}; padding:20px; border-radius:12px; box-shadow:${shadow}; font-family:'Segoe UI'; min-width:320px;">
   <div style="font-size:12px; color:${p.textColor}; opacity:0.7; margin-bottom:10px;">SALES TREND</div>
   <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:10px;">
-    <div style="font-size:28px; font-weight:bold; color:${p.textColor};">R$ 1.5M</div>
+    <div style="font-size:28px; font-weight:bold; color:${p.textColor};">1.5M</div>
     <div style="font-size:12px; color:#4caf50; font-weight:600;">+12%</div>
   </div>
   <svg viewBox="0 0 ${width} ${height}" width="100%" height="80px" style="overflow:visible;">
@@ -92,6 +92,75 @@ export const sparklineLineTemplate: TemplateDefinition<SparklineLineProps> = {
   exportDax: (p) => {
     const shadow = shadowCss(p)
     const areaOpacity = Math.max(0, Math.min(1, p.areaOpacity / 100))
-    return `Sparkline SVG Measure = \nVAR _Table = ALLSELECTED('YourDateTable'[Date])\nVAR _X_Min = MINX(_Table, CALCULATE(MIN('YourDateTable'[Date])))\nVAR _X_Max = MAXX(_Table, CALCULATE(MAX('YourDateTable'[Date])))\nVAR _Y_Min = 0\nVAR _Y_Max = MAXX(_Table, [YourValueMeasure])\nVAR _Width = 200\nVAR _Height = 80\nVAR _StrokeWidth = ${p.strokeWidth}\nVAR _LineColor = "${p.accentColor}"\nVAR _FillOpacity = ${areaOpacity}\nVAR _ShowArea = ${p.showArea}\nVAR _PathData = \n    CONCATENATEX(\n        _Table,\n        VAR _Val = [YourValueMeasure]\n        VAR _Date = SELECTEDVALUE('YourDateTable'[Date])\n        VAR _X = INT( DIVIDE( (_Date - _X_Min), (_X_Max - _X_Min) ) * _Width )\n        VAR _Y = INT( _Height - DIVIDE( (_Val - _Y_Min), (_Y_Max - _Y_Min) ) * _Height )\n        RETURN IF(_Val <> BLANK(), "L " & _X & " " & _Y, ""),\n        " ",\n        'YourDateTable'[Date] ASC\n    )\nVAR _CleanPath = "M" & RIGHT(_PathData, LEN(_PathData)-1)\nVAR _AreaPath = IF(_ShowArea, \n    "<path d='" & _CleanPath & " L " & _Width & " " & _Height & " L 0 " & _Height & " Z' fill='" & _LineColor & "' fill-opacity='" & _FillOpacity & "' stroke='none' />", \n    ""\n)\nRETURN \n"<div style='background-color:${p.bgColor}; padding:20px; border-radius:12px; box-shadow:${shadow}; font-family:Segoe UI;'>" &\n"<div style='font-size:12px; color:${p.textColor}; opacity:0.7; margin-bottom:10px;'>TREND</div>" &\n"<div style='font-size:28px; font-weight:bold; color:${p.textColor};'>" & FORMAT([YourValueMeasure], "General Number") & "</div>" &\n"<svg viewBox='0 0 " & _Width & " " & _Height & "' width='100%' height='80px' style='overflow:visible;'>" &\n_AreaPath &\n"<path d='" & _CleanPath & "' fill='none' stroke='" & _LineColor & "' stroke-width='" & _StrokeWidth & "' stroke-linecap='round' stroke-linejoin='round' />" &\n"</svg></div>"`
+    return `Sparkline - Value =
+[KPI Value]
+
+Sparkline - Date Column =
+-- Replace with your date column (must be a real Date column)
+-- Example: 'Date'[Date]
+
+Sparkline - Value By Date =
+-- Optional: if you need a special calc by date (otherwise reuse [KPI Value])
+[KPI Value]
+
+Sparkline - HTML =
+VAR _DateCol = 'Date'[Date]
+VAR _Table = ALLSELECTED(_DateCol)
+VAR _HasDates = NOT ISEMPTY(_Table)
+
+VAR _X_Min = MINX(_Table, _DateCol)
+VAR _X_Max = MAXX(_Table, _DateCol)
+VAR _X_Den = MAX(1, _X_Max - _X_Min)
+
+VAR _Y_Min = 0
+VAR _Y_Max = MAXX(_Table, CALCULATE([KPI Value]))
+VAR _Y_Den = MAX(1e-9, _Y_Max - _Y_Min)
+
+VAR _Width = 200
+VAR _Height = 80
+VAR _StrokeWidth = ${p.strokeWidth}
+VAR _LineColor = "${p.accentColor}"
+VAR _FillOpacity = ${areaOpacity}
+VAR _ShowArea = ${p.showArea}
+
+VAR _PathData =
+    IF(
+        NOT _HasDates,
+        "",
+        CONCATENATEX(
+            _Table,
+            VAR _Val = CALCULATE([KPI Value])
+            VAR _Date = _DateCol
+            VAR _X = INT(DIVIDE((_Date - _X_Min), _X_Den) * _Width)
+            VAR _Y = INT(_Height - DIVIDE((_Val - _Y_Min), _Y_Den) * _Height)
+            RETURN IF(NOT ISBLANK(_Val), "L " & _X & " " & _Y, ""),
+            " ",
+            _DateCol,
+            ASC
+        )
+    )
+
+VAR _CleanPath =
+    IF(
+        LEN(_PathData) >= 2,
+        "M" & RIGHT(_PathData, LEN(_PathData) - 1),
+        "M 0 " & _Height
+    )
+
+VAR _AreaPath =
+    IF(
+        _ShowArea,
+        "<path d='" & _CleanPath & " L " & _Width & " " & _Height & " L 0 " & _Height & " Z' fill='" & _LineColor & "' fill-opacity='" & _FillOpacity & "' stroke='none' />",
+        ""
+    )
+
+RETURN
+"<div style='background-color:${p.bgColor}; padding:20px; border-radius:12px; box-shadow:${shadow}; font-family:Segoe UI;'>" &
+"<div style='font-size:12px; color:${p.textColor}; opacity:0.7; margin-bottom:10px;'>TREND</div>" &
+"<div style='font-size:28px; font-weight:bold; color:${p.textColor};'>" & FORMAT([KPI Value], "General Number") & "</div>" &
+"<svg viewBox='0 0 " & _Width & " " & _Height & "' width='100%' height='80px' style='overflow:visible;'>" &
+_AreaPath &
+"<path d='" & _CleanPath & "' fill='none' stroke='" & _LineColor & "' stroke-width='" & _StrokeWidth & "' stroke-linecap='round' stroke-linejoin='round' />" &
+"</svg></div>"`
   },
 }

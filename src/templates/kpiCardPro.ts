@@ -100,7 +100,33 @@ export const kpiCardProTemplate: TemplateDefinition<KpiCardProProps> = {
     { id: 'textColor', label: 'Text Color', type: 'color' },
     { id: 'bgColor', label: 'Background Color', type: 'color' },
     { id: 'radius', label: 'Border Radius', type: 'range', min: 0, max: 24, step: 1 },
-    { id: 'iconName', label: 'Icon Name (Google)', type: 'text', placeholder: 'monitoring' },
+    {
+      id: 'iconName',
+      label: 'Icon Name',
+      type: 'select',
+      options: [
+        { value: 'monitoring', label: '📊 monitoring' },
+        { value: 'trending_up', label: '📈 trending_up' },
+        { value: 'analytics', label: '📉 analytics' },
+        { value: 'shopping_cart', label: '🛒 shopping_cart' },
+        { value: 'attach_money', label: '💰 attach_money' },
+        { value: 'paid', label: '💸 paid' },
+        { value: 'savings', label: '🏦 savings' },
+        { value: 'receipt_long', label: '🧾 receipt_long' },
+        { value: 'inventory', label: '📦 inventory' },
+        { value: 'store', label: '🏪 store' },
+        { value: 'payments', label: '💳 payments' },
+        { value: 'account_balance', label: '💼 account_balance' },
+        { value: 'credit_score', label: '📊 credit_score' },
+        { value: 'wallet', label: '👛 wallet' },
+        { value: 'sell', label: '💵 sell' },
+        { value: 'local_shipping', label: '🚚 local_shipping' },
+        { value: 'speed', label: '⚡ speed' },
+        { value: 'rocket_launch', label: '🚀 rocket_launch' },
+        { value: 'emoji_events', label: '🏆 emoji_events' },
+        { value: 'military_tech', label: '🏅 military_tech' },
+      ],
+    },
     { id: 'shadowX', label: 'Shadow X', type: 'range', min: -20, max: 20, step: 1 },
     { id: 'shadowY', label: 'Shadow Y', type: 'range', min: -20, max: 20, step: 1 },
     { id: 'shadowBlur', label: 'Shadow Blur', type: 'range', min: 0, max: 50, step: 1 },
@@ -143,7 +169,7 @@ export const kpiCardProTemplate: TemplateDefinition<KpiCardProProps> = {
     <span class="material-symbols-outlined" style="font-size:40px; color:${p.accentColor};">${p.iconName}</span>
     <div>
       <div style="color:${p.textColor}; opacity:0.7; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Total Sales</div>
-      <div style="color:${p.textColor}; font-size:32px; font-weight:bold; line-height:1;">R$ 1.5Mi</div>
+      <div style="color:${p.textColor}; font-size:32px; font-weight:bold; line-height:1;">1.5Mi</div>
     </div>
   </div>
   ${footer}
@@ -165,19 +191,75 @@ export const kpiCardProTemplate: TemplateDefinition<KpiCardProProps> = {
           : markerType === 'arrow'
             ? `"<div style='position:absolute; top:-10px; left:" & _FtTargetPct & "; transform:translateX(-50%); color:${targetMarkerColor}; font-size:10px;'>▼</div>"`
             : markerType === 'circle'
-              ? `"<div style='position:absolute; top:50%; left:" & _FtTargetPct & "; width:8px; height:8px; background:${targetMarkerColor}; border-radius:50%; transform:translate(-50%,-50%); border:1px solid " & _CorFundo & ";'></div>"`
+              ? `"<div style='position:absolute; top:50%; left:" & _FtTargetPct & "; width:8px; height:8px; background:${targetMarkerColor}; border-radius:50%; transform:translate(-50%,-50%); border:1px solid " & _BgColor & ";'></div>"`
               : `""`
 
       const metaLegendLogic =
         markerType === 'none'
           ? `""`
-          : `"<div style='font-size:10px; opacity:0.8; display:flex; align-items:center; gap:4px;'><span style='width:2px; height:8px; background:${targetMarkerColor}; display:block;'></span> ${targetLabel}: " & FORMAT([MedidaMeta], "0%") & "</div>"`
+          : `"<div style='font-size:10px; opacity:0.8; display:flex; align-items:center; gap:4px;'><span style='width:2px; height:8px; background:${targetMarkerColor}; display:block;'></span> ${targetLabel}: " & FORMAT(_FtTarget, "0%") & "</div>"`
 
-      daxFooter = `VAR _FtVal = [MedidaProgresso]\nVAR _FtTarget = [MedidaMeta]\nVAR _FtWidth = (_FtVal * 100) & "%"\nVAR _FtTargetPct = (_FtTarget * 100) & "%"\nVAR _FtMarkerHtml = ${markerLogic}\nVAR _FtHtml = "<div style='margin-top:20px; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;'><div style='display:flex; justify-content:space-between; margin-bottom:4px; color:" & _CorTexto & ";'><div style='font-size:10px; opacity:0.8;'>Progress: " & FORMAT(_FtVal, "0%") & "</div>" & ${metaLegendLogic} & "</div><div style='height:6px; background-color:${p.progressBgColor}; border-radius:3px; width:100%; position:relative;'><div style='height:100%; width:" & _FtWidth & "; background-color:" & _CorIcone & "; border-radius:3px;'></div>" & _FtMarkerHtml & "</div></div>"`
+      daxFooter = `VAR _FtVal = [KPI Progress]\nVAR _FtTarget = [KPI Target]\nVAR _FtWidth = FORMAT(MIN(1, MAX(0, _FtVal)), "0%")\nVAR _FtTargetPct = FORMAT(MIN(1, MAX(0, _FtTarget)), "0%")\nVAR _FtMarkerHtml = ${markerLogic}\nVAR _FtHtml = "<div style='margin-top:20px; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;'><div style='display:flex; justify-content:space-between; margin-bottom:4px; color:" & _TextColor & ";'><div style='font-size:10px; opacity:0.8;'>Progress: " & FORMAT(_FtVal, "0%") & "</div>" & ${metaLegendLogic} & "</div><div style='height:6px; background-color:${p.progressBgColor}; border-radius:3px; width:100%; position:relative;'><div style='height:100%; width:" & _FtWidth & "; background-color:" & _AccentColor & "; border-radius:3px;'></div>" & _FtMarkerHtml & "</div></div>"`
     } else if (p.footerType === 'dumbbell') {
-      daxFooter = `VAR _DValAnt = [MedidaAnterior]\nVAR _DValAtu = [MedidaAtual]\nVAR _DMax = [MedidaMaximo]\nVAR _DPctAnt = DIVIDE(_DValAnt, _DMax, 0) * 100\nVAR _DPctAtu = DIVIDE(_DValAtu, _DMax, 0) * 100\nVAR _DStart = MIN(_DPctAnt, _DPctAtu) & "%"\nVAR _DWidth = ABS(_DPctAtu - _DPctAnt) & "%"\nVAR _DPrevColor = "${p.dumbPrevColor}"\nVAR _FtHtml = "<div style='margin-top:20px; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;'><div style='position:relative; width:100%; height:12px; display:flex; align-items:center;'><div style='position:absolute; left:" & _DStart & "; width:" & _DWidth & "; height:2px; background-color:" & _CorTexto & "; opacity:0.3;'></div><div style='position:absolute; left:" & _DPctAnt & "%" & "; width:8px; height:8px; background-color:" & _DPrevColor & "; border-radius:50%; transform:translateX(-50%);'></div><div style='position:absolute; left:" & _DPctAtu & "%" & "; width:12px; height:12px; background-color:" & _CorIcone & "; border-radius:50%; transform:translateX(-50%); border:2px solid " & _CorFundo & ";'></div></div><div style='display:flex; justify-content:space-between; font-size:10px; color:" & _CorTexto & "; opacity:0.6; margin-top:4px;'><span>Prev: " & FORMAT(_DValAnt, "#,0") & "</span><span>Current: " & FORMAT(_DValAtu, "#,0") & "</span></div></div>"`
+      daxFooter = `VAR _DValPrev = [KPI Prev]\nVAR _DValCurr = [KPI Curr]\nVAR _DMax = [KPI Max]\nVAR _DPctPrev = DIVIDE(_DValPrev, _DMax, 0) * 100\nVAR _DPctCurr = DIVIDE(_DValCurr, _DMax, 0) * 100\nVAR _DStart = MIN(_DPctPrev, _DPctCurr) & "%"\nVAR _DWidth = ABS(_DPctCurr - _DPctPrev) & "%"\nVAR _DPrevColor = "${p.dumbPrevColor}"\nVAR _FtHtml = "<div style='margin-top:20px; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;'><div style='position:relative; width:100%; height:12px; display:flex; align-items:center;'><div style='position:absolute; left:" & _DStart & "; width:" & _DWidth & "; height:2px; background-color:" & _TextColor & "; opacity:0.3;'></div><div style='position:absolute; left:" & _DPctPrev & "%" & "; width:8px; height:8px; background-color:" & _DPrevColor & "; border-radius:50%; transform:translateX(-50%);'></div><div style='position:absolute; left:" & _DPctCurr & "%" & "; width:12px; height:12px; background-color:" & _AccentColor & "; border-radius:50%; transform:translateX(-50%); border:2px solid " & _BgColor & ";'></div></div><div style='display:flex; justify-content:space-between; font-size:10px; color:" & _TextColor & "; opacity:0.6; margin-top:4px;'><span>Prev: " & FORMAT(_DValPrev, "#,0") & "</span><span>Current: " & FORMAT(_DValCurr, "#,0") & "</span></div></div>"`
     }
 
-    return `KPI Card Measure = \nVAR _Value = FORMAT([YourMeasure], "R$ #,##0")\nVAR _Title = "Total Sales"\nVAR _BgColor = "${p.bgColor}"\nVAR _TextColor = "${p.textColor}"\nVAR _AccentColor = "${p.accentColor}"\nVAR _Radius = "${p.radius}px"\nVAR _IconName = "${p.iconName}"\n${daxFooter}\n\nRETURN \n"${styleImport}" & \n"<div style='background-color: " & _BgColor & "; border-radius: " & _Radius & "; padding: 24px; box-shadow: ${shadow}; font-family: Segoe UI, sans-serif; color: " & _TextColor & ";'>\n    <div style='display: flex; align-items: center; gap: 16px;'>\n        <span class='material-symbols-outlined' style='font-size: 40px; color: " & _AccentColor & ";'>" & _IconName & "</span>\n        <div>\n            <div style='opacity:0.7; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;'>" & _Title & "</div>\n            <div style='font-size: 32px; font-weight: bold; line-height: 1;'>" & _Value & "</div>\n        </div>\n    </div>" & _FtHtml & "\n</div>"`
+    return `KPI Card Pro - Value =
+[YourMeasure]
+
+-- Example: [Total Sales]
+-- This is your main KPI value (current period)
+
+KPI Card Pro - Progress =
+[KPI Progress]
+
+-- Example: Progress = DIVIDE([Total Sales], [Sales Target])
+-- Returns 0..1 (percentage) representing progress toward a target
+-- Ensure [Sales Target] is not BLANK; otherwise return 0
+-- VAR _Progress = DIVIDE([Total Sales], [Sales Target], 0)
+
+KPI Card Pro - Target =
+[KPI Target]
+
+-- Example: [Sales Target]
+-- This can be a static number, a measure, or a slicer selection
+-- If you use a slicer, you might need SELECTEDVALUE
+-- VAR _Target = SELECTEDVALUE('Targets'[TargetValue], 0)
+
+KPI Card Pro - Prev =
+[KPI Prev]
+
+-- Example: [Total Sales Prev Period]
+-- Usually calculated with SAMEPERIODLASTYEAR or DATEADD
+-- VAR _Prev = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))
+-- VAR _Prev = CALCULATE([Total Sales], DATEADD('Date'[Date], -1, MONTH))
+
+KPI Card Pro - Curr =
+[KPI Curr]
+
+-- Example: [Total Sales Current Period]
+-- Often the same as [YourMeasure] but can be filtered differently
+-- VAR _Curr = CALCULATE([Total Sales], DATESBETWEEN('Date'[Date], [Start], [End]))
+
+KPI Card Pro - Max =
+[KPI Max]
+
+-- Example: [Maximum Sales Ever] or a fixed denominator for dumbbell
+-- VAR _Max = MAXX(ALL('Date'), [Total Sales])
+-- VAR _Max = 1000000  -- fixed 1M as denominator
+
+KPI Card Pro - HTML =
+VAR _Value = FORMAT([YourMeasure], "#,##0")
+VAR _Title = "Total Sales"
+VAR _BgColor = "${p.bgColor}"
+VAR _TextColor = "${p.textColor}"
+VAR _AccentColor = "${p.accentColor}"
+VAR _Radius = "${p.radius}px"
+VAR _IconName = "${p.iconName}"
+${daxFooter}
+
+RETURN
+"${styleImport}" &
+"<div style='background-color: " & _BgColor & "; border-radius: " & _Radius & "; padding: 24px; box-shadow: ${shadow}; font-family: Segoe UI, sans-serif; color: " & _TextColor & ";'>\n    <div style='display: flex; align-items: center; gap: 16px;'>\n        <span class='material-symbols-outlined' style='font-size: 40px; color: " & _AccentColor & ";'>" & _IconName & "</span>\n        <div>\n            <div style='opacity:0.7; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;'>" & _Title & "</div>\n            <div style='font-size: 32px; font-weight: bold; line-height: 1;'>" & _Value & "</div>\n        </div>\n    </div>" & _FtHtml & "\n</div>"`
   },
 }
