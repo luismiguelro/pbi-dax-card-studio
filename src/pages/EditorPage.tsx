@@ -6,6 +6,7 @@ import CodeBlock from '../components/CodeBlock'
 import ThemeToggle from '../components/ThemeToggle'
 import { getTemplateById } from '../templates/registry'
 import { readJson, writeJson } from '../lib/storage'
+import type { TemplateDefinition } from '../templates/types'
 
 type PresetState = {
   templateId: string
@@ -19,33 +20,6 @@ function presetKey(id: string) {
 export default function EditorPage() {
   const { templateId } = useParams()
   const template = useMemo(() => getTemplateById(templateId), [templateId])
-
-  const [value, setValue] = useState<Record<string, unknown>>({})
-
-  useEffect(() => {
-    if (!template) return
-    const saved = readJson<PresetState>(presetKey(template.id))
-    if (saved && saved.templateId === template.id && saved.props) {
-      setValue({ ...template.defaultProps, ...saved.props })
-      return
-    }
-    setValue({ ...template.defaultProps })
-  }, [template])
-
-  useEffect(() => {
-    if (!template) return
-    writeJson(presetKey(template.id), { templateId: template.id, props: value } satisfies PresetState)
-  }, [template, value])
-
-  const previewHtml = useMemo(() => {
-    if (!template) return ''
-    return template.renderPreviewHtml(value as never)
-  }, [template, value])
-
-  const dax = useMemo(() => {
-    if (!template) return ''
-    return template.exportDax(value as never)
-  }, [template, value])
 
   if (!template) {
     return (
@@ -67,6 +41,39 @@ export default function EditorPage() {
     )
   }
 
+  return (
+    <EditorInner
+      key={template.id}
+      template={template as unknown as TemplateDefinition<Record<string, unknown>>}
+    />
+  )
+}
+
+function EditorInner({ template }: { template: TemplateDefinition<Record<string, unknown>> }) {
+  const [value, setValue] = useState<Record<string, unknown>>(() => {
+    const saved = readJson<PresetState>(presetKey(template.id))
+    if (saved && saved.templateId === template.id && saved.props) {
+      return { ...template.defaultProps, ...saved.props }
+    }
+    return { ...template.defaultProps }
+  })
+
+  const [importError, setImportError] = useState<string | null>(null)
+
+  useEffect(() => {
+    writeJson(presetKey(template.id), { templateId: template.id, props: value } satisfies PresetState)
+  }, [template, value])
+
+  const previewHtml = useMemo(() => {
+    if (!template) return ''
+    return template.renderPreviewHtml(value as never)
+  }, [template, value])
+
+  const dax = useMemo(() => {
+    if (!template) return ''
+    return template.exportDax(value as never)
+  }, [template, value])
+
   const onExportJson = () => {
     const payload = JSON.stringify({ templateId: template.id, props: value }, null, 2)
     const blob = new Blob([payload], { type: 'application/json' })
@@ -81,9 +88,18 @@ export default function EditorPage() {
   const onImportJson = async (file: File | null) => {
     if (!file) return
     const text = await file.text()
-    const parsed = JSON.parse(text) as PresetState
-    if (!parsed || parsed.templateId !== template.id) return
-    setValue({ ...template.defaultProps, ...(parsed.props ?? {}) })
+
+    try {
+      const parsed = JSON.parse(text) as PresetState
+      if (!parsed || parsed.templateId !== template.id) {
+        setImportError(`Invalid preset: expected templateId "${template.id}"`)
+        return
+      }
+      setImportError(null)
+      setValue({ ...template.defaultProps, ...(parsed.props ?? {}) })
+    } catch {
+      setImportError('Invalid JSON file')
+    }
   }
 
   return (
@@ -119,6 +135,12 @@ export default function EditorPage() {
                 Reset
               </button>
             </div>
+
+            {importError ? (
+              <div style={{ padding: '0 18px 12px', color: 'var(--muted)', fontSize: 12 }}>
+                {importError}
+              </div>
+            ) : null}
 
             <ControlPanel template={template as never} value={value} onChange={setValue} />
           </aside>

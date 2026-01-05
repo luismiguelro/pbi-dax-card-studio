@@ -119,7 +119,7 @@ export const dumbbellTemplate: TemplateDefinition<DumbbellProps> = {
     <div style="${dotPrevStyle}"></div>
     <div style="${dotCurrStyle}"></div>
   </div>
-  ${p.isCardMode ? `<div style=\"display:flex; justify-content:space-between; width:100%; font-size:10px; color:${p.textColor}; opacity:0.65; margin-top:10px;\"><span>Prev: ${prev}</span><span>Current: ${curr}</span></div>` : ''}
+  ${p.isCardMode ? `<div style="display:flex; justify-content:space-between; width:100%; font-size:10px; color:${p.textColor}; opacity:0.65; margin-top:10px;"><span>Prev: ${prev}</span><span>Current: ${curr}</span></div>` : ''}
 </div>`
   },
   exportDax: (p) => {

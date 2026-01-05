@@ -1,11 +1,32 @@
 import { useCallback, useState } from 'react'
 
+async function copyToClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const el = document.createElement('textarea')
+  el.value = text
+  el.setAttribute('readonly', '')
+  el.style.position = 'fixed'
+  el.style.top = '0'
+  el.style.left = '0'
+  el.style.opacity = '0'
+  document.body.appendChild(el)
+  el.select()
+
+  const ok = document.execCommand('copy')
+  document.body.removeChild(el)
+  if (!ok) throw new Error('Copy failed')
+}
+
 export default function CodeBlock({ value }: { value: string }) {
   const [copied, setCopied] = useState(false)
 
   const onCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(value)
+      await copyToClipboard(value)
       setCopied(true)
       setTimeout(() => setCopied(false), 1200)
     } catch {
