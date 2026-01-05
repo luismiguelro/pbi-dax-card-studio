@@ -3,19 +3,16 @@ import type { ThemeMode } from '../lib/theme'
 import { applyThemeToDom, getStoredTheme, storeTheme } from '../lib/theme'
 
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>('dark')
+  const [mode, setMode] = useState<ThemeMode>(() => getStoredTheme())
 
   useEffect(() => {
-    const initial = getStoredTheme()
-    setMode(initial)
-    applyThemeToDom(initial)
-  }, [])
+    storeTheme(mode)
+    applyThemeToDom(mode)
+  }, [mode])
 
   const toggle = () => {
     const next: ThemeMode = mode === 'dark' ? 'light' : 'dark'
     setMode(next)
-    storeTheme(next)
-    applyThemeToDom(next)
   }
 
   return (

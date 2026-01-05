@@ -32,16 +32,22 @@ function ControlRow<TProps extends Record<string, unknown>>({
   templateId: string
 }) {
   const id = control.id
+  const inputId = `${templateId}:${id}`
   const raw = (props as Record<string, unknown>)[id]
 
   if (control.type === 'color') {
     const v = typeof raw === 'string' ? raw : '#ffffff'
     return (
       <div className="cp-row">
-        <div className="cp-label">{control.label}</div>
+        <label className="cp-label" htmlFor={inputId}>
+          {control.label}
+        </label>
         <input
           className="cp-input"
           type="color"
+          id={inputId}
+          name={id}
+          aria-label={control.label}
           value={v}
           onChange={(e) => onChange(setProp(props, id, e.target.value))}
         />
@@ -53,11 +59,16 @@ function ControlRow<TProps extends Record<string, unknown>>({
     const v = toNumber(raw)
     return (
       <div className="cp-row">
-        <div className="cp-label">{control.label}</div>
+        <label className="cp-label" htmlFor={inputId}>
+          {control.label}
+        </label>
         <div className="cp-range">
           <input
             className="cp-input"
             type="range"
+            id={inputId}
+            name={id}
+            aria-label={control.label}
             min={control.min}
             max={control.max}
             step={control.step ?? 1}
@@ -80,10 +91,15 @@ function ControlRow<TProps extends Record<string, unknown>>({
       : ''
     return (
       <div className="cp-row">
-        <div className="cp-label">{control.label}</div>
+        <label className="cp-label" htmlFor={inputId}>
+          {control.label}
+        </label>
         <input
           className="cp-input"
           type="text"
+          id={inputId}
+          name={id}
+          aria-label={control.label}
           value={v}
           placeholder={control.placeholder}
           list={listId}
@@ -123,6 +139,8 @@ function ControlRow<TProps extends Record<string, unknown>>({
       <label className="cp-checkbox">
         <input
           type="checkbox"
+          id={inputId}
+          name={id}
           checked={v}
           onChange={(e) => onChange(setProp(props, id, e.target.checked))}
         />
@@ -135,9 +153,14 @@ function ControlRow<TProps extends Record<string, unknown>>({
     const v = typeof raw === 'string' ? raw : control.options[0]?.value ?? ''
     return (
       <div className="cp-row">
-        <div className="cp-label">{control.label}</div>
+        <label className="cp-label" htmlFor={inputId}>
+          {control.label}
+        </label>
         <select
           className="cp-input"
+          id={inputId}
+          name={id}
+          aria-label={control.label}
           value={v}
           onChange={(e) => onChange(setProp(props, id, e.target.value))}
         >
